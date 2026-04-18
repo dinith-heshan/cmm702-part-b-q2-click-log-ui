@@ -79,34 +79,73 @@
 
 			}
 
-			function syncToServer(){
+			// --- With PHP backend ---
+			
+			// function syncToServer(){
 
-				var xmlhttp;
+			// 	var xmlhttp;
 			    
-			    if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-			        xmlhttp = new XMLHttpRequest();
-			    }
-			    else {// code for IE6, IE5
-			        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-			    }
+			//     if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+			//         xmlhttp = new XMLHttpRequest();
+			//     }
+			//     else {// code for IE6, IE5
+			//         xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			//     }
 
-				xmlhttp.onreadystatechange = function() {
-				    if (this.readyState == 4 && this.status == 200) {
+			// 	xmlhttp.onreadystatechange = function() {
+			// 	    if (this.readyState == 4 && this.status == 200) {
 				    	
-				        var responseText = this.responseText;
-				        //console.log("Response:"+responseText);
+			// 	        var responseText = this.responseText;
+			// 	        //console.log("Response:"+responseText);
 
-				        if(responseText !== "Data saved successfully")
-				        	document.getElementById("container").innerHTML = '<span class="spanWhite">Server went away. Please try again.</span>';
-				    }
-				};
-				//var getLookups = "saveTaps.php?id="+uniqueIdentifier+"&var="+dependentVariable+"&taps=["+tapLogsArray+"]";
-				var url = "saveTaps.php";
-				var params ="id="+uniqueIdentifier+"&var="+dependentVariable+"&taps=["+tapLogsArray+"]";
-				xmlhttp.open("POST",url,true);
-				xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-				xmlhttp.send(params);
+			// 	        if(responseText !== "Data saved successfully")
+			// 	        	document.getElementById("container").innerHTML = '<span class="spanWhite">Server went away. Please try again.</span>';
+			// 	    }
+			// 	};
+			// 	//var getLookups = "saveTaps.php?id="+uniqueIdentifier+"&var="+dependentVariable+"&taps=["+tapLogsArray+"]";
+			// 	var url = "saveTaps.php";
+			// 	var params ="id="+uniqueIdentifier+"&var="+dependentVariable+"&taps=["+tapLogsArray+"]";
+			// 	xmlhttp.open("POST",url,true);
+			// 	xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			// 	xmlhttp.send(params);
 
+			// }
+
+			// --- Without PHP backend ---
+
+			function syncToServer(){
+			
+			    const projectId = "cmm702-part-b-q2";
+			
+			    tapLogsArray.forEach(tapStr => {
+			
+			        const tap = JSON.parse(tapStr);
+			
+			        const duration = tap.endTimestamp - tap.startTimestamp;
+			
+			        const payload = {
+			            fields: {
+			                session_id: { stringValue: uniqueIdentifier },
+			                device: { stringValue: dependentVariable },
+			                tap_sequence: { integerValue: tap.tapSequenceNumber },
+			                start_timestamp: { integerValue: tap.startTimestamp },
+			                end_timestamp: { integerValue: tap.endTimestamp },
+			                duration: { integerValue: duration },
+			                interface_type: { stringValue: tap.interface },
+			                interface_sequence: { integerValue: tap.interfaceSequence }
+			            }
+			        };
+			
+			        fetch(`https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/tap_logs`, {
+			            method: "POST",
+			            headers: {
+			                "Content-Type": "application/json"
+			            },
+			            body: JSON.stringify(payload)
+			        });
+			    });
+			
+			    console.log("Data sent to Firestore");
 			}
 
 			function tapityTap(tep){
