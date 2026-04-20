@@ -1,18 +1,29 @@
 body{
 	background: white;
 	font-family: 'Open sans',sans-serif;
+	margin: 0;
 }
+
+p {
+	margin: 0;
+}
+
+main {
+	margin: auto;
+}
+
 div{
-	width:95%; 
 	/*background:white;*/
 	margin:auto;
 	padding:30px;
 	color: steelblue;
 	/*margin-top:150px;*/
 }
+
 #container{
 	padding: 1em;
 /*	background-color: steelblue;*/
+	max-width: 400px;
 	width:85%;
 	display: none;
 	border: 1px solid;
@@ -21,21 +32,18 @@ div{
     margin:auto;
 }
 
-.buttoncontainer{
-	width:60%; 
-	background:white;
+#buttoncontainer{
+	display: block;
+	max-width: 460px;
 	margin:auto;
-	padding:30px;
 	color: steelblue;
-	margin-top:150px;
 }
 
 button{
-	width:100px;
+	min-width: 100px;
 	height: 40px;
 	text-align: center;
-	vertical-align: middle;
-	margin: 5px;
+	margin: 12px auto;
 	color: ivory;
 	font-size: 1em;
 	/*float: right;*/
@@ -49,24 +57,26 @@ button{
 #continue{
 	display: none;
 }
+
 #next{
 	float:right;
 }
+
 input{
 	margin: 5px;
 	width:250px;
 	border-collapse: collapse;
 	padding:5px;
 	font-size: 1em;
-	font-family: 'Ek mukta';
 }
+
 label{
 	margin: 5px;
 	padding:5px;
 	font-size: 1em;
 	color:#1a1a1a;
-	font-family: 'Ek mukta';
 }
+
 .label2{
 	margin: 5px;
 	padding:5px;
@@ -74,40 +84,49 @@ label{
 	color:#888;
 	font-family: 'Open Sans';
 }
+
 span{
 	color: orange;
-	font-size: 1.2em;
 	user-select:none;
 }
+
 .span2{
 	color: orange;
     font-size: 1.75em;
 
 }
+
 .spanTime{
 	color: orange;
-    font-size: 1.25em;
 
 }
+
 .spanWhite{
-	color: #1a1a1a;
-    font-size: 1.25em;
+	color: steelblue;
 
 }
+
 .rightAlign{
 	position: relative;
 	float: right;
+}
+
+#tapAgain{
+	margin-top: 100px;
 }
 
 #counter{
 	height:30px;
 	width:100%;
 	margin:0px;
+	margin-top: 2px;
 	padding:0px;
-	display:inline-block;
+	display:flex;
+	justify-content: center;
 	background: none;
-	color: #1a1a1a;
+	font-size: 18px;
 }
+
 #action{
 
 	float:right; 
@@ -122,6 +141,7 @@ span{
 	display:inline-block;
 	display: none;
 }
+
 #tapHere{
 	font-size:12px;
 	border: solid 1px lightgrey;
@@ -131,14 +151,14 @@ span{
 	height:250px;/*overflow-y:scroll;*/margin:0px;padding:0px;
 }
 
-@media screen and (min-width:768px){
+@media screen and (min-width:500px){
 
-	div{
-		width:60%; 
-	}
 
-	.buttoncontainer{
+
+	#buttoncontainer{
+		display: flex;
 		width:100%;
+
 	}
 	button{
 		float:none;
@@ -147,26 +167,18 @@ span{
 	/*#container{
 		width:60%;
 	}*/
-	#container{
-		min-width:500px;
-	}
 
 }
+
 @media screen and (min-width:1366px){
 
-	div{
-		width:50%; 
-	}
-
 	.buttoncontainer{
+		display: block;
 		width:100%;
 	}
 	button{
 		float:none;
 		display:inline-block;
-	}
-	#container{
-		min-width:500px;
 	}
 	/*#container{
 		width:50%;

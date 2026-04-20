@@ -1,0 +1,24 @@
+{
+  "name": "cmm702-part-b-q2-click-log-ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dinith-heshan/cmm702-part-b-q2-click-log-ui.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/dinith-heshan/cmm702-part-b-q2-click-log-ui/issues"
+  },
+  "homepage": "https://github.com/dinith-heshan/cmm702-part-b-q2-click-log-ui#readme",
+  "dependencies": {
+    "firebase-admin": "^13.8.0"
+  }
+}
