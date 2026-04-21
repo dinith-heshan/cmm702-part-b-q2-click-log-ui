@@ -1,7 +1,7 @@
-let sessionId = null;
-
 const interfaceVariations = 2;
 const tapLimit = 50;
+
+let sessionId = null;
 
 let platformVariable;
 
@@ -13,20 +13,19 @@ let tapCounter = 0;
 let tapStartTime = 0;
 let totalTouchDuration = 0;
 
-let actionContainer, actionText, feedback, feedbackValue, startNext, tapAgain, tapContainer;
+let actionContainer, actionText, feedback, feedbackValue, platformContainer, startNext, tapAgain, tapContainer;
 
 function onLoad() {
-    feedback = document.getElementById("feedback");
-    feedbackValue = document.getElementById("feedbackValue");
     actionContainer = document.getElementById("actionContainer");
     actionText = document.getElementById("actionText");
+    feedback = document.getElementById("feedback");
+    feedbackValue = document.getElementById("feedbackValue");
+    platformContainer = document.getElementById("platformContainer");
     tapContainer = document.getElementById("tapContainer");
     startNext = document.getElementById("startNext");
     tapAgain = document.getElementById("tapAgain");
 
-    if (Date.now() % 2 == 0) {
-        showFeedback = true;
-    }
+    showFeedback = Math.random() < 0.5;
 
     const tapHereElement = document.getElementById('tapHere');
 
@@ -43,8 +42,7 @@ async function initializeSession() {
     try {
         const res = await fetch("/api/startSession", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({platform: platformVariable})
+            headers: { "Content-Type": "application/json" }
         });
 
         const data = await res.json();
@@ -111,16 +109,11 @@ function tapityTap(tapEventObject){
             tap["endTimestamp"] = tapEndTime;
 
             if(showFeedback) {
-                tap["interfaceType"] = "feedback";
-
                 if (tapCounter == 1) {
                     actionText.style.display = "none";
                     feedback.style.display = "flex";
                 }
-
                 feedbackValue.textContent = meanTouchDuration.toFixed(2);
-            } else {
-                tap["interfaceType"] = "no-feedback";
             }
 
             tapLogsArray.push(tap);
@@ -157,6 +150,8 @@ async function syncToServer() {
         const payload = {
             sessionId: sessionId,
             platform: platformVariable,
+            interfaceSequence: interfaceSequence,
+            interfaceType: showFeedback ? "feedback" : "no-feedback",
             taps: tapLogsArray
         };
 

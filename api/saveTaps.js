@@ -20,11 +20,13 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { sessionId, platform, taps } = req.body;
+        const { sessionId, platform, interfaceSequence, interfaceType, taps } = req.body;
 
         if (
             !sessionId || typeof sessionId !== "string" ||
             !platform || typeof platform !== "string" ||
+            !Number.isInteger(interfaceSequence) ||
+            !interfaceType || typeof interfaceType !== "string" ||
             !Array.isArray(taps) || taps.length === 0
         ) {
             return res.status(400).json({
@@ -32,6 +34,15 @@ export default async function handler(req, res) {
                 error: "Invalid input"
             });
         }
+
+        const sessionData = {
+            sessionId,
+            platform,
+            interfaceSequence,
+            interfaceType,
+
+            serverTimestamp: admin.firestore.FieldValue.serverTimestamp(),
+        };
 
         const batch = db.batch();
 
@@ -49,19 +60,18 @@ export default async function handler(req, res) {
             const tapDuration = tap.endTimestamp - tap.startTimestamp;
 
             batch.set(docRef, {
-                sessionId: sessionId,
-                platform: platform,
+                sessionId,
+                platform,
+                interfaceType,
 
                 tapSequenceNumber: tap.tapSequenceNumber,
                 startTimestamp: tap.startTimestamp,
                 endTimestamp: tap.endTimestamp,
-                tapDuration: tapDuration,
-                interfaceType: tap.interfaceType,
-
-                serverTimestamp: admin.firestore.FieldValue.serverTimestamp(),
+                tapDuration: tapDuration
             });
         }
 
+        await db.collection("sessions").doc(sessionId).set(sessionData);
         await batch.commit();
 
         console.log("Batch committed successfully");
