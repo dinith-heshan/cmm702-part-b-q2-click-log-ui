@@ -19,15 +19,17 @@ export default async function handler(req, res) {
     try {
         const { sessionId, platform, taps } = req.body;
 
-        if (!sessionId || !platform || !taps) {
-        return res.status(400).send("Missing fields");
+        if (
+            !sessionId || typeof sessionId !== "string" ||
+            !platform || typeof platform !== "string" ||
+            !Array.isArray(taps) || taps.length === 0
+        ) {
+            return res.status(400).send("Invalid input");
         }
 
         const batch = db.batch();
 
         for (const tap of taps) {
-            const docRef = db.collection("tap_logs").doc();
-
             if (
                 typeof tap.startTimestamp !== "number" ||
                 typeof tap.endTimestamp !== "number"
@@ -36,24 +38,32 @@ export default async function handler(req, res) {
                 continue;
             }
 
+            const docRef = db.collection("tapLogs").doc();
+
             const tapDuration = tap.endTimestamp - tap.startTimestamp;
 
             batch.set(docRef, {
-                session_id: sessionId,
+                sessionId: sessionId,
                 platform: platform,
 
-                tap_sequence_number: tap.tapSequenceNumber,
-                start_timestamp: tap.startTimestamp,
-                end_timestamp: tap.endTimestamp,
-                tap_duration: tapDuration,
-                interface_type: tap.interfaceType,
+                tapSequenceNumber: tap.tapSequenceNumber,
+                startTimestamp: tap.startTimestamp,
+                endTimestamp: tap.endTimestamp,
+                tapDuration: tapDuration,
+                interfaceType: tap.interfaceType,
 
-                server_timestamp: admin.firestore.FieldValue.serverTimestamp(),
+                serverTimestamp: admin.firestore.FieldValue.serverTimestamp(),
             });
         }
 
         await batch.commit();
-        return res.status(200).send("Data saved successfully");
+
+        console.log("Batch committed successfully");
+
+        return res.status(200).json({
+            success: true,
+            saved: taps.length
+        });
 
     } catch (err) {
         console.error(err);
