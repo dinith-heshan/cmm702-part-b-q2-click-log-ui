@@ -44,7 +44,7 @@ async function initializeSession() {
         const res = await fetch("/api/startSession", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({device: platformVariable})
+            body: JSON.stringify({platform: platformVariable})
         });
 
         const data = await res.json();
