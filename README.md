@@ -40,5 +40,3 @@ Users begin by selecting a device type.
 
 * Do not refresh the page during a session
 * Ensure consistent interaction for accurate results
-
----
