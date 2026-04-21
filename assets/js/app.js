@@ -124,7 +124,7 @@ function tapityTap(tapEventObject){
                 feedbackValue.textContent = meanTouchDuration.toFixed(2);
                 tapContainer.style.display="none";
 
-                if (interfaceSequence <= interfaceVariations) {
+                if (interfaceSequence < interfaceVariations) {
                     startNext.style.display="block";
                 } else {
                     tapAgain.style.display="block";
