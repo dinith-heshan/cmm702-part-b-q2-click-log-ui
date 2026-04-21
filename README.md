@@ -1,8 +1,6 @@
 # Tap Interaction Study
 
-This project is a controlled experiment designed to measure tap interaction performance across different devices and interface conditions.
-
-The application is deployed on **Vercel**, and all interaction data is collected and stored in **Firebase Firestore** for analysis.
+This project is a controlled experiment designed to measure tap interaction performance across different interface conditions.
 
 ---
 
