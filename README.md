@@ -30,7 +30,7 @@ Users begin by selecting their device type.
 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 
 * **Frontend:** Web application (JS)
 * **Database:** Firebase Firestore
