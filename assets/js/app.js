@@ -156,7 +156,7 @@ async function syncToServer() {
     try {
         const payload = {
             sessionId: sessionId,
-            device: platformVariable,
+            platform: platformVariable,
             taps: tapLogsArray
         };
 
