@@ -13,7 +13,10 @@ const db = admin.firestore();
 
 export default async function handler(req, res) {
     if (req.method !== "POST") {
-        return res.status(405).send("Method Not Allowed");
+        return res.status(405).json({
+            success: false,
+            error: "Method Not Allowed"
+        });
     }
 
     try {
@@ -24,7 +27,10 @@ export default async function handler(req, res) {
             !platform || typeof platform !== "string" ||
             !Array.isArray(taps) || taps.length === 0
         ) {
-            return res.status(400).send("Invalid input");
+            return res.status(400).json({
+                success: false,
+                error: "Invalid input"
+            });
         }
 
         const batch = db.batch();
@@ -67,6 +73,9 @@ export default async function handler(req, res) {
 
     } catch (err) {
         console.error(err);
-        return res.status(500).send("Server error");
+        return res.status(500).json({
+            success: false,
+            error: "Server error"
+        });
     }
 }
