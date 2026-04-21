@@ -17,57 +17,44 @@ export default async function handler(req, res) {
     }
 
     try {
-        const body = req.body;
+        const { sessionId, platform, taps } = req.body;
 
-        // If sent as x-www-form-urlencoded string
-        const params = new URLSearchParams(body);
-
-        const sessionId = params.get("id");
-        const platform = params.get("platform"); // ios / android / macos / windows
-        const tapsRaw = params.get("taps");
-
-        if (!sessionId || !platform || !tapsRaw) {
+        if (!sessionId || !platform || !taps) {
         return res.status(400).send("Missing fields");
         }
 
-        // taps comes as stringified array
-        const taps = JSON.parse("[" + tapsRaw + "]");
-
         const batch = db.batch();
 
-        const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
+        for (const tap of taps) {
+            const docRef = db.collection("tap_logs").doc();
 
-        taps.forEach((tapStr) => {
-        const tap = JSON.parse(tapStr);
+            if (
+                typeof tap.startTimestamp !== "number" ||
+                typeof tap.endTimestamp !== "number"
+            ) {
+                console.warn("Invalid tap ignored:", tap);
+                continue;
+            }
 
-        const docRef = db.collection("tap_logs").doc();
+            const tapDuration = tap.endTimestamp - tap.startTimestamp;
 
-        if (
-            typeof tap.startTimestamp !== "number" ||
-            typeof tap.endTimestamp !== "number"
-        ) continue;
+            batch.set(docRef, {
+                session_id: sessionId,
+                platform: platform,
 
-        const duration = tap.endTimestamp - tap.startTimestamp;
+                tap_sequence_number: tap.tapSequenceNumber,
+                start_timestamp: tap.startTimestamp,
+                end_timestamp: tap.endTimestamp,
+                tap_duration: tapDuration,
+                interface_type: tap.interfaceType,
 
-        batch.set(docRef, {
-            session_id: sessionId,
-            platform: platform,
-            interface_type: tap.interface,
-            interface_sequence: tap.interfaceSequence,
+                server_timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            });
+        }
 
-            tap_sequence: tap.tapSequenceNumber,
-            start_timestamp: tap.startTimestamp,
-            end_timestamp: tap.endTimestamp,
+        await batch.commit();
+        return res.status(200).send("Data saved successfully");
 
-            duration_ms: duration,
-
-            created_at: serverTimestamp,
-        });
-        });
-
-    await batch.commit();
-
-    return res.status(200).send("Data saved successfully");
     } catch (err) {
         console.error(err);
         return res.status(500).send("Server error");

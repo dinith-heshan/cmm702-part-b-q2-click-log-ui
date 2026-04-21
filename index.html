@@ -5,241 +5,53 @@
 		<meta charset="utf8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
-		<link rel="stylesheet" href="index.css">
+		<link rel="stylesheet" href="assets/css/styles.css">
 		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
-		<script type="text/javascript">
-
-			const interfaceVariations = 2;
-			const tapLimit = 50;
-
-			let platformVariable;
-
-			let tapLogsArray = [];
-
-			let interfaceSequence = 1;
-			let showFeedback = false;
-			let tapCounter = 0;
-			let tapStartTime = 0;
-			let totalTouchDuration = 0;
-			let uniqueIdentifier = 0;
-
-            let actionContainer, actionText, feedback, feedbackValue, startNext, tapAgain, tapContainer;
-
-			function onLoad() {
-                feedback = document.getElementById("feedback");
-                feedbackValue = document.getElementById("feedbackValue");
-                actionContainer = document.getElementById("actionContainer");
-                actionText = document.getElementById("actionText");
-                tapContainer = document.getElementById("tapContainer");
-                startNext = document.getElementById("startNext");
-                tapAgain = document.getElementById("tapAgain");
-
-				let sessionTimestamp = Date.now();
-
-				if (sessionTimestamp % 2 == 0) {
-					showFeedback = true;
-				}
-                
-				uniqueIdentifier = sessionTimestamp + "" + Math.floor(Math.random() * 42);
-
-				const tapHereElement = document.getElementById('tapHere');
-
-				//Set mouse and touch listeners
-                const events = ["mouseup", "mousedown", "touchstart", "touchend"];
-
-                for (const event of events) {
-                    tapHereElement.addEventListener(event, tapityTap);
-                }
-
-			}
-
-			function savePlatform(platform){
-				platformVariable = platform;
-
-				actionContainer.style.display="flex";
-				platformContainer.style.display = "none";
-				tapContainer.style.display = "block";
-			}
-
-			function tapityTap(tapEventObject){
-				const tapEvent = tapEventObject.type;
-
-				console.log("Tap Event: "+tapEvent);
-
-				switch(tapEvent){
-
-					case "touchstart":
-					tapEventObject.preventDefault();
-                    // fall through
-
-					case "mousedown":
-					tapStartTime = Date.now();
-					break;
-
-					case "touchend":
-					tapEventObject.preventDefault();
-                    // fall through
-
-					case "mouseup":
-					const tapEndTime = Date.now();
-
-                    let duration = 0
-                    if (tapStartTime > 0) {
-					    duration = (tapEndTime - tapStartTime);
-                    } else {
-                        console.log("Invalid Tap Start Time: " + tapStartTime);
-                        break;
-                    }
-
-                    if (duration > 0){
-						console.log("Tap Count: " + tapCounter + "; Tap duration: " + duration + " ms");
-						tapCounter++;
-
-						totalTouchDuration += duration;
-						const meanTouchDuration = totalTouchDuration / tapCounter;
-
-						let tap = {};
-
-						tap["sessionID"] = uniqueIdentifier;
-						tap["platform"] = platformVariable;
-						tap["tapSequenceNumber"] = tapCounter;
-						tap["startTimestamp"] = tapStartTime;
-						tap["endTimestamp"] = tapEndTime;
-						tap["tapDuration"] = duration;
-
-						if(showFeedback) {
-							tap["interface"] = "feedback";
-
-                            if (tapCounter == 1) {
-                                actionText.style.display = "none";
-                                feedback.style.display = "flex";
-                            }
-
-                            feedbackValue.textContent = meanTouchDuration.toFixed(2);
-                        } else {
-							tap["interface"] = "no-feedback";
-                        }
-
-						tapLogsArray.push(JSON.stringify(tap));
-
-						if (tapCounter >= tapLimit) {
-                            actionText.style.display = "none";
-                            feedback.style.display = "flex";
-                            feedbackValue.textContent = meanTouchDuration.toFixed(2);
-                            tapContainer.style.display="none";
-
-							interfaceSequence++;
-
-							if (interfaceSequence <= interfaceVariations) {
-								startNext.style.display="block";
-							} else {
-								tapAgain.style.display="block";
-							}
-
-							syncToServer();
-
-							return;
-						}
-
-					}
-					tapStartTime = 0;
-					break;
-				}
-
-			}
-
-			async function syncToServer() {
-				try {
-					const payload = {
-					sessionId: uniqueIdentifier,
-					device: platformVariable,
-					taps: tapLogsArray
-					};
-
-					const res = await fetch("/api/saveTaps", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json"
-					},
-					body: JSON.stringify(payload)
-					});
-
-					const data = await res.json();
-
-					if (!data.success) {
-                        console.log("Server went away. Try again.");
-					}
-
-				} catch (err) {
-					console.error(err);
-				}
-			}
-
-			function startNextRound(){
-				tapCounter = 0;
-				tapStartTime = 0;
-				totalTouchDuration = 0;
-                showFeedback = !showFeedback;
-
-				actionText.style.display="block";
-				feedback.style.display="none";
-				startNext.style.display="none";
-                tapContainer.style.display="block";
-			}
-
-			function tapAgainReload() {
-				location.reload();
-			}
-
-			window.addEventListener('load', () => {
-                onLoad();
-				console.log("Page loaded!");
-			});
-		</script>
+		<script src="assets/js/app.js" defer></script>
 
 	</head>
 
 	<body class="defaultStyle">
 
-            <div id="instructions">
+        <div id="instructions">
 
-                <h1>Tap Interaction Study</h1>
-                <p>This experiment measures tap timing performance across different interface conditions.</p>
+            <h1>Tap Interaction Study</h1>
+            <p>This experiment measures tap timing performance across different interface conditions.</p>
 
-                <h2>Instructions</h2>
-                <ul>
-                    <li>Select your device type to begin.</li>
-                    <li>You will complete <b>two tapping rounds</b>.</li>
-                    <li>Each round consists of up to <b>50 taps</b>.</li>
-                    <li>Please complete at least the first round before exiting.</li>
-                </ul>
+            <h2>Instructions</h2>
+            <ul>
+                <li>Select your device type to begin.</li>
+                <li>You will complete <b>two tapping rounds</b>.</li>
+                <li>Each round consists of up to <b>50 taps</b>.</li>
+                <li>Please complete at least the first round before exiting.</li>
+            </ul>
 
+        </div>
+
+        <div id="platformContainer">
+            <button type="button" class="buttonStyle" onclick="savePlatform('android')">Android</button>
+            <button type="button" class="buttonStyle" onclick="savePlatform('ios')">iOS</button>
+            <button type="button" class="buttonStyle" onclick="savePlatform('macos')">macOS</button>
+            <button type="button" class="buttonStyle" onclick="savePlatform('windows')">Windows</button>
+        </div>
+
+        <div id="actionContainer">
+            <h1 id="actionText" class="actionText">! TAP !</h1>
+
+            <div id="feedback" class="actionText">
+                <h3>Mean tap duration:</h3>
+                <h3 id="feedbackValue">0</h3>
+                <h3> ms</h3>
             </div>
 
-            <div id="platformContainer">
-                <button type="button" class="buttonStyle" onclick="savePlatform('android')">Android</button>
-                <button type="button" class="buttonStyle" onclick="savePlatform('ios')">iOS</button>
-                <button type="button" class="buttonStyle" onclick="savePlatform('macos')">macOS</button>
-                <button type="button" class="buttonStyle" onclick="savePlatform('windows')">Windows</button>
-            </div>
+            <button id="startNext" class="buttonStyle" onclick="startNextRound()">Start Next</button>
+            <button id="tapAgain" class="buttonStyle" onclick="tapAgainReload()">Tap Again</button>
+        </div>
 
-			<div id="actionContainer">
-				<h1 id="actionText" class="actionText">! TAP !</h1>
-
-                <div id="feedback" class="actionText">
-                    <h3>Mean tap duration:</h3>
-                    <h3 id="feedbackValue">0</h3>
-                    <h3> ms</h3>
-                </div>
-
-                <button id="startNext" class="buttonStyle" onclick="startNextRound()">Start Next</button>
-                <button id="tapAgain" class="buttonStyle" onclick="tapAgainReload()">Tap Again</button>
-			</div>
-
-			<div id="tapContainer">
-				<button id="tapHere"><img src="2x/round_touch_app_white_36dp.png"/></button>
-			</div>
+        <div id="tapContainer">
+            <button id="tapHere"><img src="assets/images/round_touch_app_white_36dp.png"/></button>
+        </div>
 
 	</body>
 
