@@ -105,9 +105,7 @@ function tapityTap(tapEventObject){
             const meanTouchDuration = totalTouchDuration / tapCounter;
 
             let tap = {};
-
-            tap["sessionId"] = sessionId;
-            tap["platform"] = platformVariable;
+            
             tap["tapSequenceNumber"] = tapCounter;
             tap["startTimestamp"] = tapStartTime;
             tap["endTimestamp"] = tapEndTime;
@@ -147,7 +145,7 @@ function tapityTap(tapEventObject){
             }
 
         }
-        
+
         tapStartTime = 0;
         break;
     }
