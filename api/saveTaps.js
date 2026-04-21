@@ -71,7 +71,7 @@ export default async function handler(req, res) {
             });
         }
 
-        await db.collection("sessions").doc(sessionId).set(sessionData);
+        await db.collection("sessions").doc().set(sessionData);
         await batch.commit();
 
         console.log("Batch committed successfully");
