@@ -20,6 +20,10 @@ export default async function handler(req, res) {
     try {
         const { platform } = req.body;
 
+        if (!platform || typeof platform !== "string") {
+            return res.status(400).json({ error: "Invalid platform" });
+        }
+
         const sessionId = uuidv4();
 
         const sessionData = {
@@ -29,7 +33,7 @@ export default async function handler(req, res) {
 
         await db.collection("sessions").doc(sessionId).set(sessionData);
 
-        console.log("Session started.")
+        console.log("Session created", sessionId);
 
         return res.status(200).json({
             success: true,
