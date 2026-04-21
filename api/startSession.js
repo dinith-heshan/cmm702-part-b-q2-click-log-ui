@@ -29,6 +29,8 @@ export default async function handler(req, res) {
 
         await db.collection("sessions").doc(sessionId).set(sessionData);
 
+        console.log("Session started.")
+
         return res.status(200).json({
             success: true,
             sessionId,
