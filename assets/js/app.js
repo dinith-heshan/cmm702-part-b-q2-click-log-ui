@@ -147,6 +147,7 @@ function tapityTap(tapEventObject){
             }
 
         }
+        
         tapStartTime = 0;
         break;
     }
