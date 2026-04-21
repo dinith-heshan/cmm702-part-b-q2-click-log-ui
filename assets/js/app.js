@@ -124,8 +124,6 @@ function tapityTap(tapEventObject){
                 feedbackValue.textContent = meanTouchDuration.toFixed(2);
                 tapContainer.style.display="none";
 
-                interfaceSequence++;
-
                 if (interfaceSequence <= interfaceVariations) {
                     startNext.style.display="block";
                 } else {
@@ -133,6 +131,8 @@ function tapityTap(tapEventObject){
                 }
 
                 syncToServer();
+
+                interfaceSequence++;
 
                 return;
             }
