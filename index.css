@@ -1,187 +1,87 @@
-body{
-	background: white;
-	font-family: 'Open sans',sans-serif;
-	margin: 0;
+.defaultStyle {
+    background: white;
+    color: steelblue;
+    font-family: 'Open sans',sans-serif;
+    font-size: 1rem;
+    margin: auto;
 }
 
-p {
-	margin: 0;
+#instructions {
+    display: block;
+    margin: auto;
+    max-width: 30rem;
+    padding: 2em;
 }
 
-main {
+#platformContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
 	margin: auto;
+	max-width: 30rem;
+    padding: 2em;
 }
 
-div{
-	/*background:white;*/
-	margin:auto;
-	padding:30px;
-	color: steelblue;
-	/*margin-top:150px;*/
-}
-
-#container{
-	padding: 1em;
-/*	background-color: steelblue;*/
-	max-width: 400px;
-	width:85%;
-	display: none;
-	border: 1px solid;
-    border-color: steelblue;
-    border-radius: 6px;
-    margin:auto;
-}
-
-#buttoncontainer{
-	display: block;
-	max-width: 460px;
-	margin:auto;
-	color: steelblue;
-}
-
-button{
-	min-width: 100px;
-	height: 40px;
-	text-align: center;
-	margin: 12px auto;
-	color: ivory;
-	font-size: 1em;
-	/*float: right;*/
+.buttonStyle {
 	background: steelblue;
-	border: 1px solid;
-	border-radius: 4px;
-	outline:none;
-	display:block;
+	border: 2px solid white;
+	border-radius: 7px;
+	color: white;
+    display: inline-block;
+    font-size: 1.2rem;
+	height: 3rem;
+	width: 7rem;
+	text-align: center;
 }
 
-#continue{
-	display: none;
+#actionContainer {
+    display: none;
+    flex-direction: column;
+    justify-content: right;
+    height: 10rem;
+	margin: auto;
+    max-width: 25em;
+    padding: 0.5em;
 }
 
-#next{
-	float:right;
+.actionText {
+    font-weight: bold;
+    text-align: center;
+    padding: 0.1em;
+    gap: 0.3rem;
 }
 
-input{
-	margin: 5px;
-	width:250px;
-	border-collapse: collapse;
-	padding:5px;
-	font-size: 1em;
+#feedback {
+    display: none;
+    justify-content: center;
 }
 
-label{
-	margin: 5px;
-	padding:5px;
-	font-size: 1em;
-	color:#1a1a1a;
+#feedbackValue {
+    color: maroon;
 }
 
-.label2{
-	margin: 5px;
-	padding:5px;
-	font-size: 1em;
-	color:#888;
-	font-family: 'Open Sans';
+#startNext, #tapAgain {
+    display: none;
+    margin: auto;
 }
 
-span{
-	color: orange;
-	user-select:none;
+#tapContainer {
+	color:navy;
+    display: none;
+    gap: 0.5rem;
+    justify-content: center;
+	margin: auto;
+    max-width: 20em;
+    padding: 0.5em;
+    border: 2px solid steelblue;
+    border-radius: 7px;
 }
 
-.span2{
-	color: orange;
-    font-size: 1.75em;
-
-}
-
-.spanTime{
-	color: orange;
-
-}
-
-.spanWhite{
-	color: steelblue;
-
-}
-
-.rightAlign{
-	position: relative;
-	float: right;
-}
-
-#tapAgain{
-	margin-top: 100px;
-}
-
-#counter{
-	height:30px;
-	width:100%;
-	margin:0px;
-	margin-top: 2px;
-	padding:0px;
-	display:flex;
-	justify-content: center;
-	background: none;
-	font-size: 18px;
-}
-
-#action{
-
-	float:right; 
-	align:center;
-	position:relative;
-	/*border: solid 1px lightgrey;*/
-	background-color:steelblue;
-	color:orange;
-	height:130px;
-	width:20%;
-	margin:0px;padding:0px;
-	display:inline-block;
-	display: none;
-}
-
-#tapHere{
-	font-size:12px;
-	border: solid 1px lightgrey;
-	display:inline-block;
-	width:100%;color:navy; 
-	/*background-color:ivory;*/
-	height:250px;/*overflow-y:scroll;*/margin:0px;padding:0px;
-}
-
-@media screen and (min-width:500px){
-
-
-
-	#buttoncontainer{
-		display: flex;
-		width:100%;
-
-	}
-	button{
-		float:none;
-		display:inline-block;
-	}
-	/*#container{
-		width:60%;
-	}*/
-
-}
-
-@media screen and (min-width:1366px){
-
-	.buttoncontainer{
-		display: block;
-		width:100%;
-	}
-	button{
-		float:none;
-		display:inline-block;
-	}
-	/*#container{
-		width:50%;
-	}*/
-
+#tapHere {
+    background-color: steelblue;
+    border: 2px solid white;
+    border-radius: 7px;
+    min-height: 10rem;
+    min-width: 20rem;
 }

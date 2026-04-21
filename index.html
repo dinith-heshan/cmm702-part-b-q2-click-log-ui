@@ -1,299 +1,246 @@
 <html>
 
 	<head>
+
 		<meta charset="utf8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
 		<link rel="stylesheet" href="index.css">
-		<link href="https://fonts.googleapis.com/css?family=Open+Sans|Open+Sans+Condensed:300|Roboto" rel="stylesheet"> 
-		<link href='https://fonts.googleapis.com/css?family=Ek+Mukta:300' rel='stylesheet' type='text/css'>
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
 		<script type="text/javascript">
 
-			var totalTouchDuration = 0;
+			const interfaceVariations = 2;
+			const tapLimit = 50;
 
-			var tapCounter=0;
-			var startTap=0, endTap=0;
-			var tapSessionStartTime=0;
-			var tapLog="";
-			var tapLogsArray=[];
+			let platformVariable;
 
-			//stop after 50 taps or 60 seconds, whichever occurs first
-			var tapLimit = 5;
-			var tapTimeOut = 60; //seconds
-			var uniqueIdentifier=0;
-			var d;
-			var dependentVariable="";
+			let tapLogsArray = [];
 
-			var showFeedback = false;
-			var interfaceVariations = 2;
-			var interfaceSequence = 1;
+			let interfaceSequence = 1;
+			let showFeedback = false;
+			let tapCounter = 0;
+			let tapStartTime = 0;
+			let totalTouchDuration = 0;
+			let uniqueIdentifier = 0;
 
-			//Called when page finishes loading
-			function onLoad(){
-				document.getElementById("tapAgain").style.display="none";
-				var el = document.getElementById('tapHere');
-				d = new Date();
+            let actionContainer, actionText, feedback, feedbackValue, startNext, tapAgain, tapContainer;
 
-				if(d.getTime()%2 ==0){
+			function onLoad() {
+                feedback = document.getElementById("feedback");
+                feedbackValue = document.getElementById("feedbackValue");
+                actionContainer = document.getElementById("actionContainer");
+                actionText = document.getElementById("actionText");
+                tapContainer = document.getElementById("tapContainer");
+                startNext = document.getElementById("startNext");
+                tapAgain = document.getElementById("tapAgain");
 
-					//console.log("Even");
-					showFeedback=true;
+				let sessionTimestamp = Date.now();
 
-				}else{
-
-					//console.log("Odd");
-					//showFeedback = false;
-
+				if (sessionTimestamp % 2 == 0) {
+					showFeedback = true;
 				}
+                
+				uniqueIdentifier = sessionTimestamp + "" + Math.floor(Math.random() * 42);
 
-				uniqueIdentifier = d.getTime();
-				var randomNumber = Math.floor(Math.random() * 42);
-				uniqueIdentifier=uniqueIdentifier+""+randomNumber;
-				//console.log("ID:"+uniqueIdentifier+","+randomNumber);
-
-				/*el.addEventListener('mousedown', tapityTap("mousedown"));
-				el.addEventListener('mouseup', tapityTap("mouseup"));
-
-				el.addEventListener('touchdown', tapityTap("touchdown"));
-				el.addEventListener('touchup', tapityTap("touchup"));*/
-				/*["mouseup","mousedown","mouseout","click","dblclick","touchstart","touchend",
-         		"touchleave","touchmove","touchcancel"].forEach(function(te) {
-     			el.addEventListener(te, tapityTap);
- 				});*/
+				const tapHereElement = document.getElementById('tapHere');
 
 				//Set mouse and touch listeners
-				//tapityTap() is set as the common listener for the events
-				["mouseup","mousedown","touchstart","touchend"].forEach(function(te) {
-     			el.addEventListener(te, tapityTap);
- 				});
+                const events = ["mouseup", "mousedown", "touchstart", "touchend"];
 
- 				//document.getElementById("tapHere").innerHTML = "<span class='span2'>Tap here</span>";
+                for (const event of events) {
+                    tapHereElement.addEventListener(event, tapityTap);
+                }
+
 			}
 
-			// function saveDependentVariable(dVariable){
 			function savePlatform(platform){
+				platformVariable = platform;
 
-				// dependentVariable = dVariable;
-				dependentVariable = platform;
-				//document.getElementById("variable1").style.display = "none";
-				//document.getElementById("variable2").style.display = "none";
-				document.getElementById("buttoncontainer").style.display = "none";
-				document.getElementById("container").style.display = "block";
-
+				actionContainer.style.display="flex";
+				platformContainer.style.display = "none";
+				tapContainer.style.display = "block";
 			}
 
-			// --- With PHP backend ---
-			
-			function syncToServer(){
+			function tapityTap(tapEventObject){
+				const tapEvent = tapEventObject.type;
 
-				var xmlhttp;
-			    
-			    if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-			        xmlhttp = new XMLHttpRequest();
-			    }
-			    else {// code for IE6, IE5
-			        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-			    }
+				console.log("Tap Event: "+tapEvent);
 
-				xmlhttp.onreadystatechange = function() {
-				    if (this.readyState == 4 && this.status == 200) {
-				    	
-				        var responseText = this.responseText;
-				        //console.log("Response:"+responseText);
-
-				        if(responseText !== "Data saved successfully")
-				        	document.getElementById("container").innerHTML = '<span class="spanWhite">Server went away. Please try again.</span>';
-				    }
-				};
-				//var getLookups = "saveTaps.php?id="+uniqueIdentifier+"&var="+dependentVariable+"&taps=["+tapLogsArray+"]";
-				var url = "saveTaps.php";
-				var params ="id="+uniqueIdentifier+"&var="+dependentVariable+"&taps=["+tapLogsArray+"]";
-				xmlhttp.open("POST",url,true);
-				xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-				xmlhttp.send(params);
-
-			}
-
-			function tapityTap(tep){
-
-				//get handle to the tap area element
-				//var el = document.getElementById("tapHere");
-				d = new Date();
-
-				//var n = d.getTime();
-
-				//get the event type
-				var te = tep.type;
-
-				//update the text of the action element
-				document.getElementById("action").innerHTML = te;
-
-				console.log("Ready:"+te);
-				//document.getElementById("tapHere").innerHTML = "I am listening: "+te;
-
-				switch(te){
+				switch(tapEvent){
 
 					case "touchstart":
-					tep.preventDefault();
+					tapEventObject.preventDefault();
+                    // fall through
 
 					case "mousedown":
-					startTap = d.getTime();
-					if(tapSessionStartTime==0)
-						tapSessionStartTime = startTap;
-
+					tapStartTime = Date.now();
 					break;
 
 					case "touchend":
-					tep.preventDefault();
+					tapEventObject.preventDefault();
+                    // fall through
 
 					case "mouseup":
-					endTap = d.getTime();
-					var duration = (endTap - startTap);
-					//tapCounter++;					
+					const tapEndTime = Date.now();
 
-					//handle exception 
-					if(startTap ==0 || endTap == 0){
+                    let duration = 0
+                    if (tapStartTime > 0) {
+					    duration = (tapEndTime - tapStartTime);
+                    } else {
+                        console.log("Invalid Tap Start Time: " + tapStartTime);
+                        break;
+                    }
 
-						//console.log("Tap count:"+tapCounter + "; Tap duration:"+duration +" millisec");
-						tapLog += "<br>Tap #"+tapCounter + "; One of the timestamps is 0.";
+                    if (duration > 0){
+						console.log("Tap Count: " + tapCounter + "; Tap duration: " + duration + " ms");
+						tapCounter++;
 
+						totalTouchDuration += duration;
+						const meanTouchDuration = totalTouchDuration / tapCounter;
 
-					}else if(startTap>0 && endTap >0 && (startTap > endTap)){
+						let tap = {};
 
-						//console.log("Tap count:"+tapCounter + "; Tap duration:"+duration +" millisec");
-						//tapLog += "<br>Tap count:"+tapCounter + "; Start timestamp larger than end timestamp";
-						
+						tap["sessionID"] = uniqueIdentifier;
+						tap["platform"] = platformVariable;
+						tap["tapSequenceNumber"] = tapCounter;
+						tap["startTimestamp"] = tapStartTime;
+						tap["endTimestamp"] = tapEndTime;
+						tap["tapDuration"] = duration;
 
-					}else{
+						if(showFeedback) {
+							tap["interface"] = "feedback";
 
-						console.log("Tap #"+tapCounter + "; Tap duration:"+duration +" ms");
-						tapCounter++;	
-						//tapTimeArray.push(duration);
-						totalTouchDuration+=duration;
-						var meanTouchDuration = totalTouchDuration / tapCounter;
+                            if (tapCounter == 1) {
+                                actionText.style.display = "none";
+                                feedback.style.display = "flex";
+                            }
 
-						var tap = {};
-						//tap["ID"]=uniqueIdentifier;
-						//tap["dependentVariable"] = dependentVariable;
-						tap["tapSequenceNumber"]=tapCounter;
-						tap["startTimestamp"]=startTap;
-						tap["endTimestamp"]=endTap;
-						tap["interfaceSequence"]=interfaceSequence;
-
-						if(showFeedback)
-							tap["interface"]= "feedbackshown";
-						else
-							tap["interface"]= "nofeedback";
-						//console.log(tap);
-						//console.log("Tap string:"+JSON.stringify(tap));
+                            feedbackValue.textContent = meanTouchDuration.toFixed(2);
+                        } else {
+							tap["interface"] = "no-feedback";
+                        }
 
 						tapLogsArray.push(JSON.stringify(tap));
 
-						tapLog += "<br>Tap #"+tapCounter + "; Tap duration:"+duration +" ms";
+						if (tapCounter >= tapLimit) {
+                            actionText.style.display = "none";
+                            feedback.style.display = "flex";
+                            feedbackValue.textContent = meanTouchDuration.toFixed(2);
+                            tapContainer.style.display="none";
 
-						//if(tapCounter>=tapLimit || ((endTap - tapSessionStartTime)/1000) >60 ){
-						if(tapCounter>=tapLimit){
-							
-							//console.log(JSON.stringify(tapLogsArray));
 							interfaceSequence++;
 
-							if(interfaceSequence <= interfaceVariations){
-
-								document.getElementById("counter").innerHTML = '<p class="spanWhite">Mean tap duration: <span class="spanTime">'+meanTouchDuration.toFixed(2)+'</span> ms</p>';
-								document.getElementById("continue").style.display="block";
-								document.getElementById("tapHere").style.display="none";
-								//console.log(tapLogsArray.toString());
-								//syncToServer();
-
-							}else{
-							
-								document.getElementById("counter").innerHTML = '<span class="spanWhite">Mean tap duration: <span class="spanTime">'+meanTouchDuration.toFixed(2)+'</span> ms</span>';
-								document.getElementById("tapHere").style.display="none";
-								document.getElementById("tapAgain").style.display="block";
-								//console.log(tapLogsArray.toString());
-								syncToServer();
+							if (interfaceSequence <= interfaceVariations) {
+								startNext.style.display="block";
+							} else {
+								tapAgain.style.display="block";
 							}
+
+							syncToServer();
 
 							return;
 						}
 
-						//Update the tap# and mean touch duration time  
-						//document.getElementById("counter").innerHTML= "Tap #"+tapCounter+" Mean touch duration: <span class='spanTime'>"+meanTouchDuration.toFixed(2)+"</span> ms";
-						if(showFeedback)
-							document.getElementById("counter").innerHTML= "Mean tap duration:  <span class='spanTime'> "+meanTouchDuration.toFixed(2)+"</span> ms";
-
-						//console.log(tapLogsArray);
-						//console.log(tapLogsArray.toString());
-						//document.getElementById("tapHere").innerHTML= tapLog;
 					}
-
-					//console.log(tapLog);
-					//document.getElementById("tapHere").innerHTML= tapLog ;
-					//document.getElementById("counter").innerHTML= tapCounter ;
-
-					startTap = 0;
-					endTap = 0;
-
-
+					tapStartTime = 0;
 					break;
-
 				}
 
-				//alert("Its is a tap");
 			}
 
-			function startNext(){
-				startTap = 0;
-				endTap = 0;
+			async function syncToServer() {
+				try {
+					const payload = {
+					sessionId: uniqueIdentifier,
+					device: platformVariable,
+					taps: tapLogsArray
+					};
+
+					const res = await fetch("/api/saveTaps", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(payload)
+					});
+
+					const data = await res.json();
+
+					if (!data.success) {
+                        console.log("Server went away. Try again.");
+					}
+
+				} catch (err) {
+					console.error(err);
+				}
+			}
+
+			function startNextRound(){
 				tapCounter = 0;
+				tapStartTime = 0;
 				totalTouchDuration = 0;
-				document.getElementById("tapHere").style.display="block";
-				document.getElementById("continue").style.display="none";
-				document.getElementById("counter").innerHTML="";
-				if(showFeedback)
-					showFeedback = false;
-				else
-					showFeedback = true;
+                showFeedback = !showFeedback;
 
-
+				actionText.style.display="block";
+				feedback.style.display="none";
+				startNext.style.display="none";
+                tapContainer.style.display="block";
 			}
 
-			function tapAgain() {
+			function tapAgainReload() {
 				location.reload();
 			}
-			
+
+			window.addEventListener('load', () => {
+                onLoad();
+				console.log("Page loaded!");
+			});
 		</script>
 
 	</head>
 
-	<body onLoad="onLoad()">
-		<main>
-            <div id="instructions" style="padding: 20px; max-width: 600px; margin: auto; font-family: Open Sans;">
-                <h2>Tap Interaction Study</h2>
+	<body class="defaultStyle">
+
+            <div id="instructions">
+
+                <h1>Tap Interaction Study</h1>
                 <p>This experiment measures tap timing performance across different interface conditions.</p>
-                <h3>Instructions</h3>
+
+                <h2>Instructions</h2>
                 <ul>
                     <li>Select your device type to begin.</li>
                     <li>You will complete <b>two tapping rounds</b>.</li>
                     <li>Each round consists of up to <b>50 taps</b>.</li>
                     <li>Please complete at least the first round before exiting.</li>
                 </ul>
+
             </div>
-            <div id="buttoncontainer">
-				<!-- <button type="button" onclick="saveDependentVariable('android')" id="variable1">Android</button>
-				<button type="button" onclick="saveDependentVariable('pc')" id="variable2">PC</button> -->
-                <button type="button" onclick="savePlatform('android')">Android</button>
-                <button type="button" onclick="savePlatform('ios')">iOS</button>
-                <button type="button" onclick="savePlatform('macos')">macOS</button>
-                <button type="button" onclick="savePlatform('windows')">Windows</button>
+
+            <div id="platformContainer">
+                <button type="button" class="buttonStyle" onclick="savePlatform('android')">Android</button>
+                <button type="button" class="buttonStyle" onclick="savePlatform('ios')">iOS</button>
+                <button type="button" class="buttonStyle" onclick="savePlatform('macos')">macOS</button>
+                <button type="button" class="buttonStyle" onclick="savePlatform('windows')">Windows</button>
             </div>
-			<div id="container" class="container">
-				<div id="counter"></div>
-				<div id="action"></div>
+
+			<div id="actionContainer">
+				<h1 id="actionText" class="actionText">! TAP !</h1>
+
+                <div id="feedback" class="actionText">
+                    <h3>Mean tap duration:</h3>
+                    <h3 id="feedbackValue">0</h3>
+                    <h3> ms</h3>
+                </div>
+
+                <button id="startNext" class="buttonStyle" onclick="startNextRound()">Start Next</button>
+                <button id="tapAgain" class="buttonStyle" onclick="tapAgainReload()">Tap Again</button>
+			</div>
+
+			<div id="tapContainer">
 				<button id="tapHere"><img src="2x/round_touch_app_white_36dp.png"/></button>
 			</div>
-			<button id="continue" onclick="startNext()">Continue</button>
-			<button id="tapAgain" onclick="tapAgain()">Tap Again</button>
-		</main>
+
 	</body>
+
 </html>
