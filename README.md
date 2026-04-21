@@ -14,7 +14,7 @@ This project is a controlled experiment designed to measure tap interaction perf
 
 ### 1. Device Selection
 
-Users begin by selecting their device type.
+Users begin by selecting a device type.
 
 ### 2. Tapping Task
 
